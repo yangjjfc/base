@@ -3,14 +3,12 @@ import App from './App.vue';
 import singleSpaVue from 'single-spa-vue';
 import router from './router';
 import store from './store/index';
-import { id, createMountIdAndMount, showIsId } from './mountEv';
 Vue.config.productionTip = false;
-let umountLock = false; // umount 锁死
-createMountIdAndMount();
+
 const vueLifecycles = singleSpaVue({
     Vue,
     appOptions: {
-        el: '#' + id,
+        el: '#main-empty',
         render: h => h(App),
         router,
         store
@@ -23,13 +21,7 @@ export const bootstrap = (props) => {
     return vueLifecycles.bootstrap(props);
 };
 
-export const mount = () => umountLock ? Promise.resolve().then(_ => {
-    showIsId();
-}) : Promise.resolve().then(_ => {
-    showIsId();
-    vueLifecycles.mount({ domElement: 'null' });
-});
-export const unmount = () => Promise.resolve().then(_ => {
-    umountLock = true;
-});
+export const mount = vueLifecycles.mount;
+export const unmount = vueLifecycles.unmount;
+
 export default vueLifecycles;
